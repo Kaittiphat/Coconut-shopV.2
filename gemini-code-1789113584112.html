@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Express - สั่งอาหารออนไลน์</title>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #ff4757;
+            --primary-hover: #e84118;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2f3542;
+            --text-muted: #747d8c;
+            --shadow: 0 10px 20px rgba(0,0,0,0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 50px;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo b {
+            color: var(--text-main);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #f1f2f6;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            width: 350px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            margin-left: 10px;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .cart-btn {
+            position: relative;
+            font-size: 1.4rem;
+            cursor: pointer;
+            background: #fff0f1;
+            color: var(--primary-color);
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .cart-btn:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        #cartCount {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--text-main);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1200') center/cover;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .hero-content h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        .cat-btn {
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 25px;
+            background: #fff;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background: var(--primary-color);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* Container & Menu Grid */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+
+        .food-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .food-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .food-info {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .food-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .food-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .food-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .food-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .add-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .add-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Cart Sidebar Overlay */
+        .cart-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            z-index: 200;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0; right: -400px;
+            width: 380px; height: 100%;
+            background: #fff;
+            z-index: 201;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none; border: none; font-size: 1.8rem; cursor: pointer;
+        }
+
+        .cart-items {
+            padding: 1.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.2rem;
+        }
+
+        .cart-item img {
+            width: 60px; height: 60px; border-radius: 8px; object-fit: cover;
+        }
+
+        .cart-item-details h4 {
+            font-size: 0.95rem;
+        }
+
+        .cart-item-details span {
+            font-size: 0.85rem; color: var(--text-muted);
+        }
+
+        .cart-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .total-price {
+            display: flex; justify-content: space-between;
+            font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .search-bar { display: none; }
+            .cart-sidebar { width: 100%; right: -100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-utensils"></i>
+            <span>Gourmet<b>Express</b></span>
+        </div>
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="ค้นหาเมนูอร่อย..." onkeyup="filterMenu()">
+        </div>
+        <div class="cart-btn" onclick="toggleCart()">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span id="cartCount">0</span>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>อร่อยสดใหม่ ส่งตรงถึงมือคุณ</h1>
+            <p>คัดสรรวัตถุดิบคุณภาพ รสชาติระดับพรีเมียม สั่งง่าย รวดเร็วทันใจ</p>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="categories">
+        <button class="cat-btn active" onclick="filterCategory('all', event)">ทั้งหมด</button>
+        <button class="cat-btn" onclick="filterCategory('main', event)">อาหารจานหลัก</button>
+        <button class="cat-btn" onclick="filterCategory('japanese', event)">อาหารญี่ปุ่น</button>
+        <button class="cat-btn" onclick="filterCategory('fastfood', event)">ฟาสต์ฟู้ด</button>
+        <button class="cat-btn" onclick="filterCategory('dessert', event)">ของหวาน & เครื่องดื่ม</button>
+    </section>
+
+    <!-- Food Menu Grid -->
+    <main class="container">
+        <div class="menu-grid" id="menuGrid">
+            <!-- เมนูอาหารจะถูกสร้างด้วย JavaScript -->
+        </div>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>ตะกร้าสินค้าของคุณ</h2>
+            <button class="close-btn" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!--รายการในตะกร้า-->
+        </div>
+        <div class="cart-footer">
+            <div class="total-price">
+                <span>ราคารวมทั้งหมด:</span>
+                <span id="totalPrice">฿0</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">ยืนยันการสั่งซื้อ</button>
+        </div>
+    </aside>
+
+    <script>
+        // ข้อมูลเมนูอาหารหลากหลายชนิด
+        const menuData = [
+            { id: 1, name: "ข้าวผัดกระเพราเนื้อสไลซ์", price: 89, category: "main", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?q=80&w=400", desc: "กระเพราเนื้อสไลซ์รสเข้มข้น หอมกลิ่นกระเพราแท้" },
+            { id: 2, name: "สเต๊กเนื้อริบอายพรีเมียม", price: 350, category: "main", img: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=400", desc: "เนื้อริบอายย่างความสุกกำลังดี เสิร์ฟพร้อมซอสพริกไทยดำ" },
+            { id: 3, name: "แซลมอนซาชิมิสด", price: 290, category: "japanese", img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=400", desc: "แซลมอนนอร์เวย์แท้ นุ่มละมุนลิ้น สดใหม่ทุกวัน" },
+            { id: 4, name: "ทงคตสึ ราเมน", price: 169, category: "japanese", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=400", desc: "น้ำซุปกระดูกหมูเข้มข้น พร้อมหมูชาชูนุ่มนวล" },
+            { id: 5, name: "ชีสเบอร์เกอร์เนื้อคู่", price: 149, category: "fastfood", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=400", desc: "เนื้อบดแท้ชิ้นหนา 2 ชั้น พร้อมชีสเยิ้มๆ" },
+            { id: 6, name: "พิซซ่าเตาถ่านฮาวายเอี้ยน", price: 259, category: "fastfood", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=400", desc: "แป้งบางกรอบ แฮมและสับปะรดเข้ากันได้อย่างลงตัว" },
+            { id: 7, name: "บิงซูสตรอว์เบอร์รี", price: 129, category: "dessert", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=400", desc: "น้ำแข็งไสสไตล์เกาหลี ท็อปด้วยสตรอว์เบอร์รีสด" },
+            { id: 8, name: "มัทฉะลาเต้เย็น", price: 75, category: "dessert", img: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?q=80&w=400", desc: "ชาเขียวมัทฉะแท้จากอุจิ รสชาติเข้มข้นกลมกล่อม" }
+        ];
+
+        let cart = [];
+
+        // ฟังก์ชันแสดงเมนูอาหาร
+        function renderMenu(items) {
+            const grid = document.getElementById('menuGrid');
+            grid.innerHTML = items.map(item => `
+                <div class="food-card">
+                    <img src="${item.img}" alt="${item.name}" class="food-img">
+                    <div class="food-info">
+                        <h3 class="food-title">${item.name}</h3>
+                        <p class="food-desc">${item.desc}</p>
+                        <div class="food-bottom">
+                            <span class="food-price">฿${item.price}</span>
+                            <button class="add-btn" onclick="addToCart(${item.id})">สั่งซื้อ</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // กรองหมวดหมู่
+        function filterCategory(category, e) {
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+
+            if (category === 'all') {
+                renderMenu(menuData);
+            } else {
+                const filtered = menuData.filter(item => item.category === category);
+                renderMenu(filtered);
+            }
+        }
+
+        // ค้นหาอาหาร
+        function filterMenu() {
+            const text = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = menuData.filter(item => item.name.toLowerCase().includes(text));
+            renderMenu(filtered);
+        }
+
+        // เพิ่มลงตะกร้า
+        function addToCart(id) {
+            const item = menuData.find(prod => prod.id === id);
+            const existingIndex = cart.findIndex(c => c.id === id);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+            updateCartUI();
+        }
+
+        // อัปเดตตะกร้าสินค้า
+        function updateCartUI() {
+            const cartItems = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            const totalPrice = document.getElementById('totalPrice');
+
+            cartCount.innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <h4>${item.name}</h4>
+                        <span>฿${item.price} x ${item.qty}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            totalPrice.innerText = `฿${total}`;
+        }
+
+        // เปิด/ปิด ตะกร้า
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+            const overlay = document.getElementById('cartOverlay');
+            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // ชำระเงิน
+        function checkout() {
+            if (cart.length === 0) {
+                alert("กรุณาเลือกอาหารก่อนทำการสั่งซื้อครับ");
+                return;
+            }
+            alert("รับออเดอร์เรียบร้อยแล้ว! ขอบคุณที่ใช้บริการครับ");
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        // เริ่มต้นแสดงผล
+        renderMenu(menuData);
+    </script>
+</body>
+</html>
